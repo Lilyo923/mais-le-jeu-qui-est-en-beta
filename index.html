@@ -1,65 +1,18 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Brad Bitt - Le Jeu</title>
-  <link rel="stylesheet" href="style.css">
-  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Brad Bitt - Le Jeu</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- INTRO -->
-  <div id="intro">
-    <div class="logo" id="logo-text"></div>
-  </div>
+    <div id="game-container"></div>
 
-  <!-- MENU PRINCIPAL -->
-  <div id="menu" class="hidden">
-    <h1 class="title">Brad Bitt</h1>
-    <h2 class="subtitle">mais le jeu</h2>
+    <!-- Phaser -->
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3/dist/phaser.js"></script>
 
-    <ul class="menu-list">
-      <li class="menu-item" id="new-game-btn">Nouvelle Partie</li>
-      <li class="menu-item disabled" id="continue-btn">Continuer</li>
-      <li class="menu-item" id="options-btn">Options</li>
-      <li class="menu-item" id="credits-btn">Crédits</li>
-    </ul>
-
-    <div class="footer">
-      <span class="version">Version Alpha 1.0</span>
-      <span class="studio">by IMAGINe Studio</span>
-    </div>
-  </div>
-
-  <!-- Fenêtre Options -->
-  <div id="options-menu" class="popup hidden">
-    <h2>Options</h2>
-    <div class="option-item">
-      <label>Difficulté :</label>
-      <select>
-        <option>Facile</option>
-        <option selected>Normal</option>
-        <option>Difficile</option>
-      </select>
-    </div>
-    <div class="option-item">
-      <label>Son :</label>
-      <button id="toggle-sound">ON</button>
-    </div>
-    <button class="back-btn">Retour</button>
-  </div>
-
-  <!-- Fenêtre Crédits -->
-  <div id="credits-menu" class="popup hidden">
-    <h2>Crédits</h2>
-    <p>
-      Site imaginé par Brad Bitt.<br>
-      Musique : échantillons créés par Mixvibes, assemblés par Lilyo.
-    </p>
-    <button class="back-btn">Retour</button>
-  </div>
-
-  <!-- On charge le JS à la fin pour être sûr que tout le DOM soit prêt -->
-  <script src="script.js"></script>
+    <!-- Script du jeu -->
+    <script src="script.js"></script>
 </body>
 </html>
