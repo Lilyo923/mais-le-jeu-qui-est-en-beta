@@ -34,3 +34,36 @@ window.addEventListener("load", () => {
     menu.classList.remove("hidden");
   }, 6800); // délai légèrement plus long pour que le CRT off se termine
 });
+// --- Gestion des sous-menus ---
+const optionsMenu = document.getElementById("options-menu");
+const creditsMenu = document.getElementById("credits-menu");
+const optionsBtn = document.getElementById("options-btn");
+const creditsBtn = document.getElementById("credits-btn");
+const backBtns = document.querySelectorAll(".back-btn");
+const toggleSoundBtn = document.getElementById("toggle-sound");
+
+let soundEnabled = true;
+
+// Ouvrir Options
+optionsBtn.addEventListener("click", () => {
+  optionsMenu.classList.remove("hidden");
+});
+
+// Ouvrir Crédits
+creditsBtn.addEventListener("click", () => {
+  creditsMenu.classList.remove("hidden");
+});
+
+// Bouton Retour (ferme les fenêtres)
+backBtns.forEach(btn => {
+  btn.addEventListener("click", () => {
+    optionsMenu.classList.add("hidden");
+    creditsMenu.classList.add("hidden");
+  });
+});
+
+// Bouton Son ON/OFF
+toggleSoundBtn.addEventListener("click", () => {
+  soundEnabled = !soundEnabled;
+  toggleSoundBtn.textContent = soundEnabled ? "ON" : "OFF";
+});
