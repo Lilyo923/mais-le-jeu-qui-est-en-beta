@@ -124,3 +124,56 @@ body {
   padding: 0 20px;
   color: #aaa;
 }
+/* --- Fenêtres popup rétro --- */
+.popup {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(10, 10, 10, 0.9);
+  border: 2px solid #fff;
+  border-radius: 8px;
+  padding: 20px;
+  width: 280px;
+  text-align: center;
+  font-family: 'Press Start 2P', monospace;
+  color: white;
+  box-shadow: 0 0 10px #00ffcc;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.popup h2 {
+  font-size: 12px;
+  margin-bottom: 20px;
+}
+
+.option-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+select, button {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 10px;
+  padding: 4px 8px;
+  background: black;
+  color: white;
+  border: 1px solid #fff;
+}
+
+.back-btn {
+  margin-top: 10px;
+  width: 100%;
+  cursor: pointer;
+}
+
+/* --- Correction du positionnement du texte IMAGINe Studio --- */
+.bottom-left {
+  position: absolute;
+  bottom: 8px;
+  left: 10px;
+  font-size: 10px;
+  color: white;
+}
