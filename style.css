@@ -1,13 +1,102 @@
-@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
-
 body {
-    margin: 0;
-    background-color: black;
-    overflow: hidden;
-    font-family: "Press Start 2P", monospace;
+  background: linear-gradient(135deg, #222, #111);
+  color: #fff;
+  font-family: 'Press Start 2P', monospace;
+  text-align: center;
+  overflow: hidden;
+  margin: 0;
 }
 
-#game-container {
-    width: 100%;
-    height: 100vh;
+.hidden { display: none; }
+
+#intro-screen {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  background: #000;
+  z-index: 10;
+}
+
+#intro-video {
+  width: 100%;
+  height: 100%;
+}
+
+#menu {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100vh;
+}
+
+.title {
+  font-size: 48px;
+  color: #ffcc00;
+  text-shadow: 2px 2px #000;
+}
+
+.subtitle {
+  font-size: 18px;
+  color: #ccc;
+  margin-top: -10px;
+}
+
+.menu-buttons {
+  margin-top: 40px;
+}
+
+button {
+  background-color: #333;
+  color: #fff;
+  border: 2px solid #555;
+  padding: 10px 20px;
+  margin: 10px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.2s;
+}
+
+button:hover:not(.disabled) {
+  background-color: #555;
+}
+
+button.disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.footer {
+  position: absolute;
+  bottom: 10px;
+  width: 100%;
+  font-size: 12px;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 20px;
+  color: #aaa;
+}
+
+.sub-menu {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #1a1a1a;
+  border: 2px solid #555;
+  padding: 30px;
+  width: 80%;
+  max-width: 400px;
+  box-shadow: 0 0 10px #000;
+}
+
+.sub-menu h2 {
+  color: #ffcc00;
+  margin-bottom: 20px;
+}
+
+.sub-menu p {
+  font-size: 12px;
+  line-height: 1.5;
+  color: #ddd;
 }
