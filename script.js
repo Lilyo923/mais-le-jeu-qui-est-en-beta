@@ -1,79 +1,60 @@
-class MenuScene extends Phaser.Scene {
-    constructor() {
-        super('MenuScene');
-    }
+// Disparaît après 8 secondes (temps de la vidéo) :
+setTimeout(() => {
+  document.getElementById('intro-screen').classList.add('hidden');
+  document.getElementById('menu').classList.remove('hidden');
+}, 8000);
 
-    create() {
-        // ----- Titre -----
-        this.add.text(400, 120, 'BRAD BITT', {
-            fontFamily: '"Press Start 2P", monospace',
-            fontSize: '32px',
-            color: '#FFD700'
-        }).setOrigin(0.5);
+// Gestion des sous-menus
+const menu = document.getElementById('menu');
+const optionsMenu = document.getElementById('options-menu');
+const creditsMenu = document.getElementById('credits-menu');
 
-        // ----- Boutons -----
-        const newGame = this.add.text(400, 300, 'NOUVELLE PARTIE', {
-            fontFamily: '"Press Start 2P", monospace',
-            fontSize: '14px',
-            color: '#FFFFFF'
-        }).setOrigin(0.5).setInteractive({ useHandCursor: true });
+document.getElementById('options').addEventListener('click', () => {
+  menu.classList.add('hidden');
+  optionsMenu.classList.remove('hidden');
+});
 
-        const continueGame = this.add.text(400, 360, 'CONTINUER', {
-            fontFamily: '"Press Start 2P", monospace',
-            fontSize: '14px',
-            color: '#888888'
-        }).setOrigin(0.5);
+document.getElementById('credits').addEventListener('click', () => {
+  menu.classList.add('hidden');
+  creditsMenu.classList.remove('hidden');
+});
 
-        // ----- Vérification sauvegarde -----
-        const hasSave = localStorage.getItem('bradBittSave');
-        if (hasSave) {
-            continueGame.setColor('#FFFFFF');
-            continueGame.setInteractive({ useHandCursor: true });
-        }
+document.getElementById('back-options').addEventListener('click', () => {
+  optionsMenu.classList.add('hidden');
+  menu.classList.remove('hidden');
+});
 
-        // ----- Animation d’entrée -----
-        this.tweens.add({
-            targets: [newGame, continueGame],
-            alpha: { from: 0, to: 1 },
-            y: '+=10',
-            ease: 'Power2',
-            duration: 1000,
-            delay: this.tweens.stagger(200)
-        });
+document.getElementById('back-credits').addEventListener('click', () => {
+  creditsMenu.classList.add('hidden');
+  menu.classList.remove('hidden');
+});
 
-        // ----- Actions -----
-        newGame.on('pointerdown', () => {
-            localStorage.removeItem('bradBittSave'); // reset sauvegarde
-            alert('Nouvelle partie lancée ! (ici on chargera le niveau 1)');
-        });
+// Sauvegarde des options
+const difficultySelect = document.getElementById('difficulty');
+const musicToggle = document.getElementById('music-toggle');
+const sfxToggle = document.getElementById('sfx-toggle');
 
-        continueGame.on('pointerdown', () => {
-            if (hasSave) {
-                alert('Chargement de la partie sauvegardée...');
-            }
-        });
+[difficultySelect, musicToggle, sfxToggle].forEach(el => {
+  el.addEventListener('change', saveSettings);
+});
 
-        // ----- Version -----
-        this.add.text(20, 570, 'Version Alpha 1.0', {
-            fontFamily: '"Press Start 2P", monospace',
-            fontSize: '10px',
-            color: '#888'
-        });
-    }
+function saveSettings() {
+  const settings = {
+    difficulty: difficultySelect.value,
+    music: musicToggle.checked,
+    sfx: sfxToggle.checked
+  };
+  localStorage.setItem('gameSettings', JSON.stringify(settings));
 }
 
-const config = {
-    type: Phaser.AUTO,
-    width: 800,
-    height: 600,
-    backgroundColor: '#1d1d1d',
-    parent: 'game-container',
-    pixelArt: true,
-    scale: {
-        mode: Phaser.Scale.FIT,
-        autoCenter: Phaser.Scale.CENTER_BOTH
-    },
-    scene: [MenuScene]
-};
-
-const game = new Phaser.Game(config);
+// Charger les options si présentes
+window.addEventListener('load', () => {
+  const saved = localStorage.getItem('gameSettings');
+  if (saved) {
+    const { difficulty, music, sfx } = JSON.parse(saved);
+    difficultySelect.value = difficulty;
+    musicToggle.checked = music;
+    sfxToggle.checked = sfx;
+    document.getElementById('continue').classList.remove('disabled');
+  }
+});
