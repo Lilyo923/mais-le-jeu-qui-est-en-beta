@@ -1,69 +1,79 @@
-window.addEventListener("load", () => {
-  const intro = document.getElementById("intro");
-  const logoText = document.getElementById("logo-text");
-  const menu = document.getElementById("menu");
+class MenuScene extends Phaser.Scene {
+    constructor() {
+        super('MenuScene');
+    }
 
-  // --- Étape 1 : IMAGINe Studio
-  setTimeout(() => {
-    logoText.textContent = "IMAGINe Studio";
-    logoText.style.opacity = 1;
-  }, 500);
+    create() {
+        // ----- Titre -----
+        this.add.text(400, 120, 'BRAD BITT', {
+            fontFamily: '"Press Start 2P", monospace',
+            fontSize: '32px',
+            color: '#FFD700'
+        }).setOrigin(0.5);
 
-  // --- Étape 2 : disparition du premier logo
-  setTimeout(() => {
-    logoText.classList.add("fade-out");
-  }, 2500);
+        // ----- Boutons -----
+        const newGame = this.add.text(400, 300, 'NOUVELLE PARTIE', {
+            fontFamily: '"Press Start 2P", monospace',
+            fontSize: '14px',
+            color: '#FFFFFF'
+        }).setOrigin(0.5).setInteractive({ useHandCursor: true });
 
-  // --- Étape 3 : Engine HwR
-  setTimeout(() => {
-    logoText.classList.remove("fade-out");
-    logoText.style.opacity = 1;
-    logoText.textContent = "Engine HwR";
-  }, 3500);
+        const continueGame = this.add.text(400, 360, 'CONTINUER', {
+            fontFamily: '"Press Start 2P", monospace',
+            fontSize: '14px',
+            color: '#888888'
+        }).setOrigin(0.5);
 
-  // --- Étape 4 : extinction CRT
-  setTimeout(() => {
-    intro.style.animation = "none";
-    intro.classList.add("crt-off");
-  }, 5500);
+        // ----- Vérification sauvegarde -----
+        const hasSave = localStorage.getItem('bradBittSave');
+        if (hasSave) {
+            continueGame.setColor('#FFFFFF');
+            continueGame.setInteractive({ useHandCursor: true });
+        }
 
-  // --- Étape 5 : cacher l’intro et afficher le menu
-  setTimeout(() => {
-    intro.style.display = "none";
-    menu.classList.remove("hidden");
-  }, 6800);
+        // ----- Animation d’entrée -----
+        this.tweens.add({
+            targets: [newGame, continueGame],
+            alpha: { from: 0, to: 1 },
+            y: '+=10',
+            ease: 'Power2',
+            duration: 1000,
+            delay: this.tweens.stagger(200)
+        });
 
-  // === ⚙️ Gestion des sous-menus (placée à l’intérieur du onload) ===
-  const optionsMenu = document.getElementById("options-menu");
-  const creditsMenu = document.getElementById("credits-menu");
-  const optionsBtn = document.getElementById("options-btn");
-  const creditsBtn = document.getElementById("credits-btn");
-  const backBtns = document.querySelectorAll(".back-btn");
-  const toggleSoundBtn = document.getElementById("toggle-sound");
+        // ----- Actions -----
+        newGame.on('pointerdown', () => {
+            localStorage.removeItem('bradBittSave'); // reset sauvegarde
+            alert('Nouvelle partie lancée ! (ici on chargera le niveau 1)');
+        });
 
-  let soundEnabled = true;
+        continueGame.on('pointerdown', () => {
+            if (hasSave) {
+                alert('Chargement de la partie sauvegardée...');
+            }
+        });
 
-  // Ouvrir Options
-  optionsBtn.addEventListener("click", () => {
-    optionsMenu.classList.remove("hidden");
-  });
+        // ----- Version -----
+        this.add.text(20, 570, 'Version 1.0', {
+            fontFamily: '"Press Start 2P", monospace',
+            fontSize: '10px',
+            color: '#888'
+        });
+    }
+}
 
-  // Ouvrir Crédits
-  creditsBtn.addEventListener("click", () => {
-    creditsMenu.classList.remove("hidden");
-  });
+const config = {
+    type: Phaser.AUTO,
+    width: 800,
+    height: 600,
+    backgroundColor: '#1d1d1d',
+    parent: 'game-container',
+    pixelArt: true,
+    scale: {
+        mode: Phaser.Scale.FIT,
+        autoCenter: Phaser.Scale.CENTER_BOTH
+    },
+    scene: [MenuScene]
+};
 
-  // Bouton Retour (ferme les fenêtres)
-  backBtns.forEach(btn => {
-    btn.addEventListener("click", () => {
-      optionsMenu.classList.add("hidden");
-      creditsMenu.classList.add("hidden");
-    });
-  });
-
-  // Bouton Son ON/OFF
-  toggleSoundBtn.addEventListener("click", () => {
-    soundEnabled = !soundEnabled;
-    toggleSoundBtn.textContent = soundEnabled ? "ON" : "OFF";
-  });
-});
+const game = new Phaser.Game(config);
