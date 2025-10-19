@@ -1,28 +1,49 @@
 body {
-  background: linear-gradient(135deg, #222, #111);
+  background: radial-gradient(circle, #1a1a1a 0%, #000 100%);
   color: #fff;
   font-family: 'Press Start 2P', monospace;
-  text-align: center;
   overflow: hidden;
+  text-align: center;
   margin: 0;
 }
 
 .hidden { display: none; }
 
-#intro-screen {
+/* --- INTRO --- */
+#intro {
   position: fixed;
   top: 0; left: 0;
   width: 100%;
   height: 100%;
-  background: #000;
+  background: black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
   z-index: 10;
+  animation: crt-flicker 0.2s infinite alternate;
 }
 
-#intro-video {
-  width: 100%;
-  height: 100%;
+.logo {
+  font-size: 20px;
+  color: #00ffcc;
+  opacity: 0;
+  text-shadow: 0 0 5px #00ffcc, 0 0 10px #00ffcc;
+  animation: glitch 1s ease-in-out infinite alternate;
 }
 
+@keyframes glitch {
+  0% { transform: skew(0deg); opacity: 0.8; }
+  50% { transform: skew(2deg); opacity: 1; }
+  100% { transform: skew(-2deg); opacity: 0.9; }
+}
+
+@keyframes crt-flicker {
+  from { opacity: 0.96; }
+  to { opacity: 1; }
+}
+
+/* --- MENU --- */
 #menu {
   display: flex;
   flex-direction: column;
@@ -37,31 +58,39 @@ body {
 }
 
 .subtitle {
-  font-size: 18px;
+  font-size: 14px;
   color: #ccc;
-  margin-top: -10px;
+  margin-bottom: 40px;
 }
 
-.menu-buttons {
-  margin-top: 40px;
+.menu-list {
+  list-style: none;
+  padding: 0;
+  display: inline-block;
+  text-align: left;
 }
 
-button {
-  background-color: #333;
+.menu-item {
+  position: relative;
+  font-size: 14px;
+  padding: 10px 0;
   color: #fff;
-  border: 2px solid #555;
-  padding: 10px 20px;
-  margin: 10px;
   cursor: pointer;
-  font-family: inherit;
-  transition: all 0.2s;
+  transition: color 0.2s;
 }
 
-button:hover:not(.disabled) {
-  background-color: #555;
+.menu-item:hover:not(.disabled) {
+  color: #ffcc00;
 }
 
-button.disabled {
+.menu-item:hover::before {
+  content: "▶";
+  position: absolute;
+  left: -20px;
+  color: #fff;
+}
+
+.menu-item.disabled {
   opacity: 0.4;
   cursor: not-allowed;
 }
@@ -70,33 +99,9 @@ button.disabled {
   position: absolute;
   bottom: 10px;
   width: 100%;
-  font-size: 12px;
+  font-size: 10px;
   display: flex;
   justify-content: space-between;
   padding: 0 20px;
   color: #aaa;
-}
-
-.sub-menu {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: #1a1a1a;
-  border: 2px solid #555;
-  padding: 30px;
-  width: 80%;
-  max-width: 400px;
-  box-shadow: 0 0 10px #000;
-}
-
-.sub-menu h2 {
-  color: #ffcc00;
-  margin-bottom: 20px;
-}
-
-.sub-menu p {
-  font-size: 12px;
-  line-height: 1.5;
-  color: #ddd;
 }
