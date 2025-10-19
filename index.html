@@ -5,70 +5,31 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Brad Bitt - Le Jeu</title>
   <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 </head>
 <body>
-  <!-- Écran d’intro (vidéo YouTube) -->
-  <div id="intro-screen">
-    <iframe 
-      id="intro-video"
-      src="https://www.youtube.com/embed/rh0dvMJVUr8?autoplay=1&controls=0&modestbranding=1&rel=0"
-      title="Intro Brad Bitt"
-      frameborder="0"
-      allow="autoplay; fullscreen"
-      allowfullscreen>
-    </iframe>
+  <!-- INTRO -->
+  <div id="intro">
+    <div class="logo" id="logo1">IMAGINe Studio</div>
+    <div class="logo hidden" id="logo2">Engine HwR</div>
   </div>
 
-  <!-- Menu principal -->
+  <!-- MENU PRINCIPAL -->
   <div id="menu" class="hidden">
     <h1 class="title">Brad Bitt</h1>
     <h2 class="subtitle">mais le jeu</h2>
 
-    <div class="menu-buttons">
-      <button id="new-game">Nouvelle Partie</button>
-      <button id="continue" class="disabled">Continuer</button>
-      <button id="options">Options</button>
-      <button id="credits">Crédits</button>
-    </div>
+    <ul class="menu-list">
+      <li class="menu-item">Nouvelle Partie</li>
+      <li class="menu-item disabled">Continuer</li>
+      <li class="menu-item">Options</li>
+      <li class="menu-item">Crédits</li>
+    </ul>
 
     <div class="footer">
       <span class="version">Version Alpha 1.0</span>
       <span class="studio">by IMAGINe Studio</span>
     </div>
-  </div>
-
-  <!-- Menu Options -->
-  <div id="options-menu" class="sub-menu hidden">
-    <h2>Options</h2>
-    <label>Difficulté :
-      <select id="difficulty">
-        <option>Facile</option>
-        <option selected>Normal</option>
-        <option>Difficile</option>
-      </select>
-    </label>
-
-    <div class="toggle">
-      <label>Musique :
-        <input type="checkbox" id="music-toggle" checked>
-      </label>
-    </div>
-
-    <div class="toggle">
-      <label>Effets sonores :
-        <input type="checkbox" id="sfx-toggle" checked>
-      </label>
-    </div>
-
-    <button id="back-options">Retour</button>
-  </div>
-
-  <!-- Menu Crédits -->
-  <div id="credits-menu" class="sub-menu hidden">
-    <h2>Crédits</h2>
-    <p>Site imaginé par Brad Bitt.<br>
-    Musique : échantillons créés par Mixvibes, assemblés par Lilyo.</p>
-    <button id="back-credits">Retour</button>
   </div>
 
   <script src="script.js"></script>
