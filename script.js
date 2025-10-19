@@ -23,7 +23,6 @@ window.addEventListener("load", () => {
 
   // --- Étape 4 : extinction CRT
   setTimeout(() => {
-    // On stoppe le scintillement pour ne pas bloquer l'animation
     intro.style.animation = "none";
     intro.classList.add("crt-off");
   }, 5500);
@@ -32,38 +31,39 @@ window.addEventListener("load", () => {
   setTimeout(() => {
     intro.style.display = "none";
     menu.classList.remove("hidden");
-  }, 6800); // délai légèrement plus long pour que le CRT off se termine
-});
-// --- Gestion des sous-menus ---
-const optionsMenu = document.getElementById("options-menu");
-const creditsMenu = document.getElementById("credits-menu");
-const optionsBtn = document.getElementById("options-btn");
-const creditsBtn = document.getElementById("credits-btn");
-const backBtns = document.querySelectorAll(".back-btn");
-const toggleSoundBtn = document.getElementById("toggle-sound");
+  }, 6800);
 
-let soundEnabled = true;
+  // === ⚙️ Gestion des sous-menus (placée à l’intérieur du onload) ===
+  const optionsMenu = document.getElementById("options-menu");
+  const creditsMenu = document.getElementById("credits-menu");
+  const optionsBtn = document.getElementById("options-btn");
+  const creditsBtn = document.getElementById("credits-btn");
+  const backBtns = document.querySelectorAll(".back-btn");
+  const toggleSoundBtn = document.getElementById("toggle-sound");
 
-// Ouvrir Options
-optionsBtn.addEventListener("click", () => {
-  optionsMenu.classList.remove("hidden");
-});
+  let soundEnabled = true;
 
-// Ouvrir Crédits
-creditsBtn.addEventListener("click", () => {
-  creditsMenu.classList.remove("hidden");
-});
-
-// Bouton Retour (ferme les fenêtres)
-backBtns.forEach(btn => {
-  btn.addEventListener("click", () => {
-    optionsMenu.classList.add("hidden");
-    creditsMenu.classList.add("hidden");
+  // Ouvrir Options
+  optionsBtn.addEventListener("click", () => {
+    optionsMenu.classList.remove("hidden");
   });
-});
 
-// Bouton Son ON/OFF
-toggleSoundBtn.addEventListener("click", () => {
-  soundEnabled = !soundEnabled;
-  toggleSoundBtn.textContent = soundEnabled ? "ON" : "OFF";
+  // Ouvrir Crédits
+  creditsBtn.addEventListener("click", () => {
+    creditsMenu.classList.remove("hidden");
+  });
+
+  // Bouton Retour (ferme les fenêtres)
+  backBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+      optionsMenu.classList.add("hidden");
+      creditsMenu.classList.add("hidden");
+    });
+  });
+
+  // Bouton Son ON/OFF
+  toggleSoundBtn.addEventListener("click", () => {
+    soundEnabled = !soundEnabled;
+    toggleSoundBtn.textContent = soundEnabled ? "ON" : "OFF";
+  });
 });
