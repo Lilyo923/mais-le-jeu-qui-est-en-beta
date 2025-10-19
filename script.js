@@ -1,60 +1,25 @@
-// Disparaît après 8 secondes (temps de la vidéo) :
-setTimeout(() => {
-  document.getElementById('intro-screen').classList.add('hidden');
-  document.getElementById('menu').classList.remove('hidden');
-}, 8000);
+// Intro : afficher successivement IMAGINe Studio puis Engine HwR
+window.addEventListener("load", () => {
+  const logo1 = document.getElementById("logo1");
+  const logo2 = document.getElementById("logo2");
+  const intro = document.getElementById("intro");
+  const menu = document.getElementById("menu");
 
-// Gestion des sous-menus
-const menu = document.getElementById('menu');
-const optionsMenu = document.getElementById('options-menu');
-const creditsMenu = document.getElementById('credits-menu');
+  // Affiche le premier logo
+  setTimeout(() => {
+    logo1.style.opacity = 1;
+  }, 500);
 
-document.getElementById('options').addEventListener('click', () => {
-  menu.classList.add('hidden');
-  optionsMenu.classList.remove('hidden');
-});
+  // Puis transition vers le deuxième logo
+  setTimeout(() => {
+    logo1.style.opacity = 0;
+    logo2.classList.remove("hidden");
+    logo2.style.opacity = 1;
+  }, 2500);
 
-document.getElementById('credits').addEventListener('click', () => {
-  menu.classList.add('hidden');
-  creditsMenu.classList.remove('hidden');
-});
-
-document.getElementById('back-options').addEventListener('click', () => {
-  optionsMenu.classList.add('hidden');
-  menu.classList.remove('hidden');
-});
-
-document.getElementById('back-credits').addEventListener('click', () => {
-  creditsMenu.classList.add('hidden');
-  menu.classList.remove('hidden');
-});
-
-// Sauvegarde des options
-const difficultySelect = document.getElementById('difficulty');
-const musicToggle = document.getElementById('music-toggle');
-const sfxToggle = document.getElementById('sfx-toggle');
-
-[difficultySelect, musicToggle, sfxToggle].forEach(el => {
-  el.addEventListener('change', saveSettings);
-});
-
-function saveSettings() {
-  const settings = {
-    difficulty: difficultySelect.value,
-    music: musicToggle.checked,
-    sfx: sfxToggle.checked
-  };
-  localStorage.setItem('gameSettings', JSON.stringify(settings));
-}
-
-// Charger les options si présentes
-window.addEventListener('load', () => {
-  const saved = localStorage.getItem('gameSettings');
-  if (saved) {
-    const { difficulty, music, sfx } = JSON.parse(saved);
-    difficultySelect.value = difficulty;
-    musicToggle.checked = music;
-    sfxToggle.checked = sfx;
-    document.getElementById('continue').classList.remove('disabled');
-  }
+  // Puis disparition de l’intro et apparition du menu
+  setTimeout(() => {
+    intro.classList.add("hidden");
+    menu.classList.remove("hidden");
+  }, 4500);
 });
