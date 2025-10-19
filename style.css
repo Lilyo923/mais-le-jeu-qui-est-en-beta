@@ -43,6 +43,25 @@ body {
   to { opacity: 1; }
 }
 
+.fade-out {
+  animation: fadeOut 1s forwards;
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+.crt-off {
+  animation: crtOff 1s forwards;
+}
+
+@keyframes crtOff {
+  0% { transform: scaleY(1); opacity: 1; }
+  80% { transform: scaleY(0.05); opacity: 1; }
+  100% { transform: scaleY(0); opacity: 0; }
+}
+
 /* --- MENU --- */
 #menu {
   display: flex;
