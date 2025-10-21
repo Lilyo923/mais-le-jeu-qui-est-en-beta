@@ -73,7 +73,7 @@ class MenuScene extends Phaser.Scene{
         t.on('pointerdown',()=>{play('click');this._onSelect(e.id);});
       }
     });
-    this.add.text(20,580,'Version Alpha 1.0',{fontFamily:'"Press Start 2P"',fontSize:'10px',color:'#aaa'}).setOrigin(0,1);
+    this.add.text(20,580,'Version Alpha 2.1',{fontFamily:'"Press Start 2P"',fontSize:'10px',color:'#aaa'}).setOrigin(0,1);
     this.add.text(780,580,'by IMAGINe Studio',{fontFamily:'"Press Start 2P"',fontSize:'10px',color:'#aaa'}).setOrigin(1,1);
     this._buildOptions();this._buildCredits();
   }
