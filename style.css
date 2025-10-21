@@ -1,13 +1,23 @@
-@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
-
-body {
-    margin: 0;
-    background-color: black;
-    overflow: hidden;
-    font-family: "Press Start 2P", monospace;
+/* Fond fixe avec profondeur + police rétro */
+:root{
+  --cyan:#32C0C1;
+  --pink:#F53098;
+  --fg:#ffffff;
+  --muted:#b8b8b8;
+}
+html,body{
+  height:100%;
+}
+body{
+  margin:0;
+  overflow:hidden;
+  font-family:"Press Start 2P", monospace;
+  /* Dégradé vertical (profondeur) */
+  background: linear-gradient(180deg, #0b0b0f 0%, #121217 60%, #0a0a0d 100%);
+}
+#game-container{
+  width:100%;
+  height:100vh;
 }
 
-#game-container {
-    width: 100%;
-    height: 100vh;
-}
+/* (Le rendu principal est géré par Phaser dans le canvas) */
