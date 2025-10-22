@@ -1,11 +1,15 @@
-/* ========= Brad Bitt — Alpha 2.2 ========= */
+/* ========= Brad Bitt — Alpha 2.2 (corrigée pour lien vers le niveau) ========= */
 const COLORS={cyan:'#32C0C1',pink:'#F53098',white:'#FFFFFF',grey:'#888888',gold:'#FFD700'};
 const SAVE_KEY='bradBittSave';
 const SETTINGS_KEY='gameSettings';
-function getSettings(){const s=localStorage.getItem(SETTINGS_KEY);
+
+function getSettings(){
+  const s=localStorage.getItem(SETTINGS_KEY);
   if(s)try{return JSON.parse(s);}catch(e){}
   const d={difficulty:'Normal',music:true,sfx:true};
-  localStorage.setItem(SETTINGS_KEY,JSON.stringify(d));return d;}
+  localStorage.setItem(SETTINGS_KEY,JSON.stringify(d));
+  return d;
+}
 function setSettings(v){localStorage.setItem(SETTINGS_KEY,JSON.stringify(v));}
 
 /* ----- PRELOAD ----- */
@@ -13,7 +17,8 @@ class PreloadScene extends Phaser.Scene{
   constructor(){super('PreloadScene');}
   preload(){
     const t=this.add.text(790,585,'Chargement',{fontFamily:'"Press Start 2P"',fontSize:'10px',color:'#fff'}).setOrigin(1,1);
-    let d=0;this.time.addEvent({delay:350,loop:true,callback:()=>{d=(d+1)%4;t.setText('Chargement'+'.'.repeat(d));}});
+    let d=0;
+    this.time.addEvent({delay:350,loop:true,callback:()=>{d=(d+1)%4;t.setText('Chargement'+'.'.repeat(d));}});
     ['click','hover','open','poweroff','start','continue','back'].forEach(v=>this.load.audio(v,`assets/sounds/${v}.wav`));
     this.load.once('complete',()=>this.time.delayedCall(300,()=>this.scene.start('IntroScene')));
   }
@@ -39,8 +44,10 @@ class IntroScene extends Phaser.Scene{
     this.tweens.add({targets:[L,R],alpha:1,scale:{from:0.9,to:1},duration:800,ease:'sine.out'});
     this.time.delayedCall(2300,()=>{
       if(getSettings().sfx)this.sound.play('poweroff',{volume:0.9});
-      this.tweens.add({targets:[L,R],scaleY:0.05,alpha:0.8,duration:500,ease:'quad.in',
-        onComplete:()=>{L.destroy();R.destroy();this.time.delayedCall(400,onDone);}});
+      this.tweens.add({
+        targets:[L,R],scaleY:0.05,alpha:0.8,duration:500,ease:'quad.in',
+        onComplete:()=>{L.destroy();R.destroy();this.time.delayedCall(400,onDone);}
+      });
     });
   }
 }
@@ -50,11 +57,15 @@ class MenuScene extends Phaser.Scene{
   constructor(){super('MenuScene');}
   create(){
     const s=getSettings(),play=(k)=>{if(s.sfx)this.sound.play(k,{volume:0.9});};
-    const title=this.add.text(400,110,'BRAD BITT',{fontFamily:'"Press Start 2P"',fontSize:'36px',color:COLORS.gold,stroke:'#fff',strokeThickness:2})
-      .setOrigin(0.5).setAlpha(0);
+
+    // ----- Titre -----
+    const title=this.add.text(400,110,'BRAD BITT',{
+      fontFamily:'"Press Start 2P"',fontSize:'36px',color:COLORS.gold,stroke:'#fff',strokeThickness:2
+    }).setOrigin(0.5).setAlpha(0);
     this.tweens.add({targets:title,alpha:1,scale:{from:0.9,to:1},duration:600});
     this.add.text(400,155,'mais le jeu',{fontFamily:'"Press Start 2P"',fontSize:'14px',color:COLORS.white}).setOrigin(0.5);
 
+    // ----- Menu principal -----
     const data=[
       {label:'NOUVELLE PARTIE',id:'new'},
       {label:'CONTINUER',id:'continue',disabled:!localStorage.getItem(SAVE_KEY)},
@@ -80,17 +91,30 @@ class MenuScene extends Phaser.Scene{
       }
     });
 
-    this.add.text(20,580,'Version Alpha 2.1.1',{fontFamily:'"Press Start 2P"',fontSize:'10px',color:'#aaa'}).setOrigin(0,1);
+    this.add.text(20,580,'Version Alpha 2.2',{fontFamily:'"Press Start 2P"',fontSize:'10px',color:'#aaa'}).setOrigin(0,1);
     this.add.text(780,580,'by IMAGINe Studio',{fontFamily:'"Press Start 2P"',fontSize:'10px',color:'#aaa'}).setOrigin(1,1);
-    this._buildOptions();this._buildCredits();
+
+    this._buildOptions();
+    this._buildCredits();
   }
 
   _onSelect(id){
     const p=(k)=>{if(getSettings().sfx)this.sound.play(k,{volume:0.9});};
-    if(id==='new'){p('start');localStorage.removeItem(SAVE_KEY);alert('Nouvelle partie (niveau 1-0)');}
-    if(id==='continue'&&localStorage.getItem(SAVE_KEY)){p('continue');alert('Chargement partie…');}
-    if(id==='options')this._toggleOptions(true);
-    if(id==='credits')this._toggleCredits(true);
+    // 🔹 Nouvelle Partie → lance ton jeu (BootScene)
+    if (id === 'new') {
+      p('start');
+      localStorage.removeItem(SAVE_KEY);
+      this.scene.start('BootScene');
+    }
+
+    // 🔹 Continuer → charge sauvegarde
+    if (id === 'continue' && localStorage.getItem(SAVE_KEY)) {
+      p('continue');
+      alert('Chargement partie…');
+    }
+
+    if (id === 'options') this._toggleOptions(true);
+    if (id === 'credits') this._toggleCredits(true);
   }
 
   /* ---- OPTIONS ---- */
@@ -104,8 +128,8 @@ class MenuScene extends Phaser.Scene{
     // difficulté
     const diffLab=this.add.text(cx-130,cy-45,'Difficulté',{fontFamily:'"Press Start 2P"',fontSize:'12px',color:'#fff'}).setOrigin(0,0.5).setVisible(false);
     const diffVal=this.add.text(cx+60,cy-45,s.difficulty,{fontFamily:'"Press Start 2P"',fontSize:'12px',color:COLORS.pink}).setOrigin(0.5).setVisible(false);
-    const L=this.add.text(cx-10,cy-45,'<',{fontFamily:'"Press Start 2P"',fontSize:'12px',color:'#fff'}).setOrigin(0.5).setInteractive().setVisible(false);
-    const R=this.add.text(cx+130,cy-45,'>',{fontFamily:'"Press Start 2P"',fontSize:'12px',color:'#fff'}).setOrigin(0.5).setInteractive().setVisible(false);
+    const L=this.add.text(cx-40,cy-45,'<',{fontFamily:'"Press Start 2P"',fontSize:'12px',color:'#fff'}).setOrigin(0.5).setInteractive().setVisible(false);
+    const R=this.add.text(cx+160,cy-45,'>',{fontFamily:'"Press Start 2P"',fontSize:'12px',color:'#fff'}).setOrigin(0.5).setInteractive().setVisible(false);
     const diffs=['Facile','Normal','Difficile'],setD=d=>{const s=getSettings();s.difficulty=d;setSettings(s);diffVal.setText(d);};
     L.on('pointerdown',()=>{p('click');setD(diffs[(diffs.indexOf(getSettings().difficulty)+2)%3]);});
     R.on('pointerdown',()=>{p('click');setD(diffs[(diffs.indexOf(getSettings().difficulty)+1)%3]);});
@@ -137,8 +161,9 @@ class MenuScene extends Phaser.Scene{
     const g=this.add.graphics().fillStyle(0x0b0b0f,0.95).fillRoundedRect(cx-210,cy-130,420,260,10)
       .lineStyle(2,0xffffff).strokeRoundedRect(cx-210,cy-130,420,260,10).setVisible(false);
     const title=this.add.text(cx,cy-100,'CREDITS',{fontFamily:'"Press Start 2P"',fontSize:'14px',color:COLORS.pink}).setOrigin(0.5).setVisible(false);
-    const text=this.add.text(cx,cy-25,"Site imaginé par Brad Bitt.\n Musique: Échantillons créés par Mixvibes,\nassemblés par Lilyo.",{fontFamily:'"Press Start 2P"',fontSize:'10px',color:'#fff',align:'center'})
-      .setOrigin(0.5).setVisible(false);
+    const text=this.add.text(cx,cy-25,"Site imaginé par Brad Bitt.\nMusique : Échantillons créés par Mixvibes,\nassemblés par Lilyo.",{
+      fontFamily:'"Press Start 2P"',fontSize:'10px',color:'#fff',align:'center'
+    }).setOrigin(0.5).setVisible(false);
     const back=this.add.text(cx,cy+95,'RETOUR',{fontFamily:'"Press Start 2P"',fontSize:'12px',color:'#fff'}).setOrigin(0.5).setInteractive().setVisible(false);
     back.on('pointerover',()=>back.setColor(COLORS.gold));
     back.on('pointerout',()=>back.setColor('#fff'));
@@ -153,5 +178,5 @@ new Phaser.Game({
   type:Phaser.AUTO,parent:'game-container',width:800,height:600,
   transparent:true,pixelArt:true,
   scale:{mode:Phaser.Scale.FIT,autoCenter:Phaser.Scale.CENTER_BOTH},
-  scene:[PreloadScene,IntroScene,MenuScene]
+  scene:[PreloadScene,IntroScene,MenuScene,BootScene,DifficultyScene,GameIntroScene] // 🔹 ajout du jeu ici
 });
