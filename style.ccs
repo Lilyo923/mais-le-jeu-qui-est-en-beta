@@ -1,14 +1,128 @@
 :root {
   --cyan:#32C0C1;
   --pink:#F53098;
-  --fg:#ffffff;
+  --white:#FFFFFF;
+  --grey:#888888;
+  --gold:#FFD700;
   --muted:#b8b8b8;
 }
-html,body {height:100%;}
-body {
+
+html,body {
+  height:100%;
   margin:0;
   overflow:hidden;
-  font-family:"Press Start 2P",monospace;
   background:linear-gradient(180deg,#0b0b0f 0%,#121217 60%,#0a0a0d 100%);
+  font-family:"Press Start 2P",monospace;
+  color:var(--white);
 }
-#game-container {width:100%;height:100vh;}
+
+#game-container {
+  width:100%;
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+/* Interface mobile */
+#mobile-ui {
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+}
+#mobile-ui.hidden { display:none; }
+
+#mobile-ui button {
+  pointer-events:auto;
+  position:absolute;
+  width:64px;
+  height:64px;
+  border-radius:8px;
+  border:2px solid var(--white);
+  background:#ffffff20;
+  color:var(--white);
+  font-family:"Press Start 2P",monospace;
+  font-size:18px;
+  text-shadow:0 1px 0 #0008;
+}
+#btn-jump   { right:24px; bottom:24px; }
+#btn-action { right:100px; bottom:24px; }
+#btn-pause  { right:24px; top:24px; width:56px; height:40px; font-size:14px; }
+#mobile-ui button:active { background:#ffffff40; transform:translateY(1px); transition:transform .05s; }
+
+/* Popups génériques */
+.popup-overlay {
+  position:absolute;
+  inset:0;
+  background:#00000090;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:10;
+}
+.popup {
+  background:#0b0b0f;
+  border:2px solid var(--white);
+  border-radius:12px;
+  padding:24px 28px;
+  color:var(--white);
+  width:min(90vw,520px);
+  text-align:center;
+  box-shadow:0 10px 30px #0008;
+}
+.popup h3 { margin-top:0; color:var(--cyan); font-size:18px; }
+.popup p { font-size:12px; color:#ddd; line-height:1.6; }
+.popup .row { margin-top:16px; display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
+.popup .btn {
+  border:2px solid var(--white);
+  background:#ffffff15;
+  color:var(--white);
+  padding:10px 14px;
+  border-radius:8px;
+  font-family:"Press Start 2P",monospace;
+  font-size:12px;
+  cursor:pointer;
+}
+.popup .btn:hover { background:#ffffff30; }
+.popup .btn.warning { border-color:var(--pink); color:var(--pink); }
+
+/* Avertissement Nouvelle Partie */
+.warning-popup {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:20px;
+  background:#0b0b0f;
+  border:2px solid var(--pink);
+  border-radius:12px;
+  padding:30px;
+  box-shadow:0 10px 30px #0008;
+  width:min(90vw,600px);
+  color:var(--white);
+}
+.warning-symbol {
+  font-size:80px;
+  color:var(--pink);
+  line-height:1;
+  text-shadow:0 0 10px var(--pink);
+  flex-shrink:0;
+}
+.warning-content { flex:1; text-align:center; }
+.warning-content p { font-size:12px; margin:0 0 20px; color:#ddd; line-height:1.6; }
+.warning-buttons { display:flex; justify-content:center; gap:16px; }
+.warning-buttons button {
+  border:2px solid var(--white);
+  background:#ffffff15;
+  color:var(--white);
+  padding:8px 12px;
+  border-radius:8px;
+  font-family:"Press Start 2P",monospace;
+  font-size:12px;
+  cursor:pointer;
+}
+.warning-buttons button:hover { background:#ffffff30; }
+.warning-buttons .danger { border-color:var(--pink); color:var(--pink); }
+
+/* Texte en bas */
+.footer-text { position:absolute; bottom:10px; left:20px; font-size:10px; color:var(--muted); }
+.footer-right { position:absolute; bottom:10px; right:20px; font-size:10px; color:var(--muted); }
