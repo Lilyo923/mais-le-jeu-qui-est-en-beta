@@ -219,3 +219,225 @@ new Phaser.Game({
   scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
   scene: [PreloadScene, IntroScene, MenuScene, BootScene, DifficultyScene, GameIntroScene]
 });
+/* -------------------------------------------------------------
+   💥 NIVEAU 1-0 : BootScene, DifficultyScene & GameIntroScene
+------------------------------------------------------------- */
+
+/* ---------- Audio Manager ---------- */
+class AudioMgr {
+  static scene = null;
+  static init(scene) { this.scene = scene; }
+  static play(key, vol = 0.9) {
+    const s = getSettings();
+    if (s.sfx && this.scene) this.scene.sound.play(key, { volume: vol });
+  }
+  static music = null;
+  static playMusic(key, vol = 0.6) {
+    const s = getSettings();
+    if (!s.music || !this.scene) return;
+    if (this.music) { this.music.stop(); this.music.destroy(); }
+    this.music = this.scene.sound.add(key, { volume: vol, loop: true });
+    this.music.play();
+  }
+  static setMusicEnabled(v) { const s = getSettings(); s.music = v; setSettings(s); if (!v && this.music) { this.music.stop(); } }
+  static setSfxEnabled(v) { const s = getSettings(); s.sfx = v; setSettings(s); }
+}
+
+/* ---------- Scène de boot / préchargement ---------- */
+class BootScene extends Phaser.Scene {
+  constructor() { super('BootScene'); }
+  preload() {
+    const t = this.add.text(400, 560, 'Chargement', { fontFamily: '"Press Start 2P"', fontSize: '12px', color: '#fff' }).setOrigin(0.5, 1);
+    let d = 0; this.time.addEvent({ delay: 350, loop: true, callback: () => { d = (d + 1) % 4; t.setText('Chargement' + '.'.repeat(d)); } });
+
+    // 🔊 SFX et musique
+    ['click', 'hover', 'open', 'poweroff', 'start', 'continue', 'back',
+     'jump', 'land_heavy', 'wind_whoosh', 'punch', 'stomp_hit', 'clong_helmet',
+     'enemy_hurt', 'spikes_toggle_on', 'spikes_toggle_off', 'timer_tick',
+     'pause_on', 'pause_off'
+    ].forEach(k => this.load.audio(k, `assets/sounds/${k}.wav`));
+
+    this.load.audio('level1_intro_theme', 'assets/sounds/level1_intro_theme.ogg');
+    this.load.spritesheet('brad', 'assets/img/brad_48x48.png', { frameWidth: 48, frameHeight: 48 });
+
+    this.load.once('complete', () => this.scene.start('DifficultyScene'));
+  }
+  create() { AudioMgr.init(this); }
+}
+
+/* ---------- Choix de difficulté avant le niveau ---------- */
+class DifficultyScene extends Phaser.Scene {
+  constructor() { super('DifficultyScene'); }
+  create() {
+    AudioMgr.init(this);
+    const s = getSettings();
+
+    const overlay = this.add.rectangle(400, 300, 800, 600, 0x000000, 0.35);
+    const panel = this.add.rectangle(400, 300, 460, 240, 0x0b0b0f, 0.98)
+      .setStrokeStyle(2, 0xffffff).setOrigin(0.5);
+    const title = this.add.text(400, 240, 'CHOISIS LA DIFFICULTÉ', {
+      fontFamily: '"Press Start 2P"', fontSize: '14px', color: COLORS.cyan
+    }).setOrigin(0.5);
+
+    const opts = ['Facile', 'Normal', 'Difficile'];
+    let x = 400 - 150;
+    opts.forEach((label) => {
+      const btn = this.add.text(x, 300, label, {
+        fontFamily: '"Press Start 2P"', fontSize: '12px', color: '#fff'
+      }).setOrigin(0.5).setInteractive({ useHandCursor: true });
+
+      btn.on('pointerover', () => { AudioMgr.play('hover', 0.7); btn.setColor(COLORS.gold); });
+      btn.on('pointerout', () => btn.setColor('#fff'));
+      btn.on('pointerdown', () => {
+        AudioMgr.play('click');
+        const st = getSettings(); st.difficulty = label; setSettings(st);
+        this.tweens.add({
+          targets: [overlay, panel, title],
+          alpha: 0, duration: 400,
+          onComplete: () => this.scene.start('GameIntroScene')
+        });
+      });
+      x += 150;
+    });
+
+    this.add.text(400, 360, 'Appuie pour lancer le niveau 1-0', {
+      fontFamily: '"Press Start 2P"', fontSize: '10px', color: '#ccc'
+    }).setOrigin(0.5);
+  }
+}
+
+/* ---------- Scène de jeu principale ---------- */
+class GameIntroScene extends Phaser.Scene {
+  constructor() { super('GameIntroScene'); }
+
+  create() {
+    AudioMgr.init(this);
+
+    const W = 4000, H = 2400;
+    this.physics.world.setBounds(0, -H, W, H + 800);
+    this.physics.world.gravity.y = 1200;
+
+    // 🌌 Fond dynamique
+    this.bg = this.add.graphics().setScrollFactor(0);
+    this._drawSky(0);
+    this.cloudsFar = this._spawnClouds(8, 0.15, 0xffffff, 0.2);
+    this.cloudsMid = this._spawnClouds(8, 0.30, 0xffffff, 0.25);
+    this.cloudsNear = this._spawnClouds(6, 0.50, 0xffffff, 0.35);
+
+    // 🧱 Plateformes & objets
+    this.platforms = this.physics.add.staticGroup();
+    this.platforms.create(800, 0, null).setDisplaySize(1600, 24).refreshBody();
+
+    const baseX = 1900, gap = 180;
+    [0,1,2,3].forEach(i => {
+      this.platforms.create(baseX + i * gap, -80 - i * 30, null)
+        .setDisplaySize(120, 18).refreshBody();
+    });
+
+    this.spikes = this.physics.add.staticGroup();
+    const spikesBlock = this.spikes.create(baseX + gap, -110, null)
+      .setData('enabled', true).setDisplaySize(110, 18).refreshBody();
+
+    this.buttons = this.physics.add.staticGroup();
+    this.buttons.create(2400, -20, null).setData({
+      mode: 'timer', duration: 5, target: spikesBlock
+    }).refreshBody();
+
+    // 👾 Ennemis
+    this.enemies = this.physics.add.group({ allowGravity: true });
+    this._spawnEnemy(3000, -40, 'basic');
+    this._spawnEnemy(3200, -40, 'helmet');
+
+    // 🧍 Joueur
+    this.player = this.physics.add.sprite(200, -1800, 'brad', 0);
+    this._initBradAnims();
+    this.player.setCollideWorldBounds(true);
+
+    // ⚙️ Physique
+    this.physics.add.collider(this.player, this.platforms, () => this._onLand());
+    this.physics.add.collider(this.enemies, this.platforms);
+
+    // 🎮 Contrôles
+    this.cursors = this.input.keyboard.createCursorKeys();
+    this.keyZ = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Z);
+    this.keySpace = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+
+    // 📷 Caméra
+    this.cameras.main.setBounds(0, -H, W, H + 600);
+    this.cameras.main.startFollow(this.player, true, 0.12, 0.12);
+
+    // 🌬️ Intro
+    AudioMgr.play('wind_whoosh', 0.6);
+    this.state = 'intro_fall';
+    this.time.delayedCall(10000, () => {
+      if (this.state === 'intro_fall') {
+        this.player.setVelocityY(0);
+        this.player.y = 0 - 30;
+      }
+    });
+  }
+
+  /* ---------- Update ---------- */
+  update(time, delta) {
+    const t = Math.min(1, time / 3000);
+    this._drawSky(t);
+    this._tickClouds(this.cloudsFar, 10 * delta / 1000);
+    this._tickClouds(this.cloudsMid, 20 * delta / 1000);
+    this._tickClouds(this.cloudsNear, 35 * delta / 1000);
+  }
+
+  /* ---------- Visuel fond / nuages ---------- */
+  _drawSky(t) {
+    this.bg.clear();
+    const top = Phaser.Display.Color.Interpolate.ColorWithColor({r:11,g:11,b:15},{r:32,g:78,b:156},100,t*100);
+    const mid = Phaser.Display.Color.Interpolate.ColorWithColor({r:18,g:18,b:23},{r:76,g:140,b:210},100,t*100);
+    const bot = Phaser.Display.Color.Interpolate.ColorWithColor({r:10,g:10,b:13},{r:40,g:96,b:176},100,t*100);
+    const g = this.bg, w = this.scale.width, h = this.scale.height;
+    g.fillStyle(Phaser.Display.Color.GetColor(top.r,top.g,top.b),1); g.fillRect(0,0,w,h*0.4);
+    g.fillStyle(Phaser.Display.Color.GetColor(mid.r,mid.g,mid.b),1); g.fillRect(0,h*0.4,w,h*0.35);
+    g.fillStyle(Phaser.Display.Color.GetColor(bot.r,bot.g,bot.b),1); g.fillRect(0,h*0.75,w,h*0.25);
+  }
+
+  _spawnClouds(n, sf, color, alpha) {
+    const g = this.add.group();
+    for (let i = 0; i < n; i++) {
+      const c = this.add.graphics().setScrollFactor(0);
+      c.fillStyle(color, alpha);
+      const x = Phaser.Math.Between(0, 800), y = Phaser.Math.Between(20, 300);
+      c.fillEllipse(x, y, Phaser.Math.Between(110, 200), Phaser.Math.Between(40, 80));
+      c._speed = sf; c._x = x; g.add(c);
+    }
+    return g;
+  }
+
+  _tickClouds(group, spd) {
+    group.children.iterate(c => {
+      c._x -= spd * c._speed;
+      if (c._x < -220) c._x = 800 + 220;
+      c.setX(c._x);
+    });
+  }
+
+  /* ---------- Ennemis & Joueur ---------- */
+  _spawnEnemy(x, y, type) {
+    const en = this.enemies.create(x, y, null);
+    en.setSize(32, 32).setBounce(0.1).setCollideWorldBounds(true);
+    en.setTintFill(type === 'helmet' ? 0x2a7dff : 0xff2a2a);
+    return en;
+  }
+
+  _onLand() {
+    if (this.landed) return;
+    this.landed = true;
+    AudioMgr.play('land_heavy', 0.8);
+    AudioMgr.playMusic('level1_intro_theme', 0.3);
+  }
+
+  _initBradAnims() {
+    if (this.anims.exists('brad_idle')) return;
+    this.anims.create({ key: 'brad_idle', frames: this.anims.generateFrameNumbers('brad', { start: 0, end: 3 }), frameRate: 6, repeat: -1 });
+    this.anims.create({ key: 'brad_walk', frames: this.anims.generateFrameNumbers('brad', { start: 4, end: 7 }), frameRate: 10, repeat: -1 });
+    this.anims.create({ key: 'brad_jump', frames: this.anims.generateFrameNumbers('brad', { start: 8, end: 11 }), frameRate: 10, repeat: -1 });
+    this.player.play('brad_idle');
+  }
+}
