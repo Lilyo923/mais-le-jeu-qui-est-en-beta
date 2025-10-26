@@ -409,14 +409,6 @@ class GameIntroScene extends Phaser.Scene {
     this.anims.create({key:'brad_walk',frames:this.anims.generateFrameNumbers('brad',{start:4,end:7}),frameRate:10,repeat:-1});
     this.anims.create({key:'brad_jump',frames:this.anims.generateFrameNumbers('brad',{start:8,end:11}),frameRate:10,repeat:-1});
   }
-
-  _setupMobile(){
-    const ui=document.getElementById('mobile-ui'); if(!ui)return;
-    ui.classList.remove('hidden'); this._mobileJump=false;
-    const jump=document.getElementById('btn-jump');
-    jump.addEventListener('touchstart',()=>{this._mobileJump=true;});
-    jump.addEventListener('touchend',()=>{this._mobileJump=false;});
-  }
 }
 
 /* === Configuration Phaser === */
