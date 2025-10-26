@@ -148,9 +148,9 @@ class MenuScene extends Phaser.Scene{
     const title=this.add.text(cx,cy-100,'OPTIONS',{fontFamily:'"Press Start 2P"',fontSize:'14px',color:COLORS.cyan}).setOrigin(0.5).setVisible(false);
 
     const diffLab=this.add.text(cx-130,cy-45,'Difficulté',{fontFamily:'"Press Start 2P"',fontSize:'12px',color:'#fff'}).setOrigin(0,0.5).setVisible(false);
-    const diffVal=this.add.text(cx+60,cy-45,s.difficulty,{fontFamily:'"Press Start 2P"',fontSize:'12px',color:COLORS.pink}).setOrigin(0.5).setVisible(false);
-    const L=this.add.text(cx-20,cy-45,'<',{fontFamily:'"Press Start 2P"',fontSize:'12px',color:'#fff'}).setOrigin(0.5).setInteractive().setVisible(false);
-    const R=this.add.text(cx+140,cy-45,'>',{fontFamily:'"Press Start 2P"',fontSize:'12px',color:'#fff'}).setOrigin(0.5).setInteractive().setVisible(false);
+    const diffVal=this.add.text(cx+50,cy-45,s.difficulty,{fontFamily:'"Press Start 2P"',fontSize:'12px',color:COLORS.pink}).setOrigin(0.5).setVisible(false);
+    const L=this.add.text(cx-10,cy-45,'<',{fontFamily:'"Press Start 2P"',fontSize:'12px',color:'#fff'}).setOrigin(0.5).setInteractive().setVisible(false);
+    const R=this.add.text(cx+110,cy-45,'>',{fontFamily:'"Press Start 2P"',fontSize:'12px',color:'#fff'}).setOrigin(0.5).setInteractive().setVisible(false);
     const diffs=['Facile','Normal','Difficile'],setD=d=>{const s=getSettings();s.difficulty=d;setSettings(s);diffVal.setText(d);};
     L.on('pointerdown',()=>{p('click');setD(diffs[(diffs.indexOf(getSettings().difficulty)+2)%3]);});
     R.on('pointerdown',()=>{p('click');setD(diffs[(diffs.indexOf(getSettings().difficulty)+1)%3]);});
@@ -179,11 +179,8 @@ class MenuScene extends Phaser.Scene{
     const g=this.add.graphics().fillStyle(0x0b0b0f,0.95).fillRoundedRect(cx-210,cy-130,420,260,10)
       .lineStyle(2,0xffffff).strokeRoundedRect(cx-210,cy-130,420,260,10).setVisible(false);
     const title=this.add.text(cx,cy-100,'CREDITS',{fontFamily:'"Press Start 2P"',fontSize:'14px',color:COLORS.pink}).setOrigin(0.5).setVisible(false);
-    const text=this.add.text(cx,cy-25,
-      "Site imaginé par Brad Bitt.\n\nMusique : Échantillons créés par Mixvibes,\nassemblés par Lilyo.",
-      {fontFamily:'"Press Start 2P"',fontSize:'10px',color:'#fff',align:'center',lineSpacing:10}
-    ).setOrigin(0.5).setVisible(false);
-    const back=this.add.text(cx,cy+95,'RETOUR',{fontFamily:'"Press Start 2P"',fontSize:'12px',color:'#fff'}).setOrigin(0.5).setInteractive().setVisible(false);
+    const text=this.add.text(cx,cy-25,"Site imaginé par Brad Bitt.\n\nMusique : Échantillons créés par Mixvibes,\nassemblés par Lilyo.",{fontFamily:'\"Press Start 2P\"',fontSize:'10px',color:'#fff',align:'center'}).setOrigin(0.5).setVisible(false);
+    const back=this.add.text(cx,cy+95,'RETOUR',{fontFamily:'\"Press Start 2P\"',fontSize:'12px',color:'#fff'}).setOrigin(0.5).setInteractive().setVisible(false);
     back.on('pointerover',()=>back.setColor(COLORS.gold));
     back.on('pointerout',()=>back.setColor('#fff'));
     back.on('pointerdown',()=>{p('back');this._toggleCredits(false);});
@@ -196,7 +193,7 @@ class MenuScene extends Phaser.Scene{
 class BootScene extends Phaser.Scene{
   constructor(){super('BootScene');}
   preload(){
-    const t=this.add.text(480,560,'Chargement',{fontFamily:'"Press Start 2P"',fontSize:'12px',color:'#fff'}).setOrigin(0.5,1);
+    const t=this.add.text(480,560,'Chargement',{fontFamily:'\"Press Start 2P\"',fontSize:'12px',color:'#fff'}).setOrigin(0.5,1);
     let d=0; this.time.addEvent({delay:350,loop:true,callback:()=>{d=(d+1)%4;t.setText('Chargement'+'.'.repeat(d));}});
     this.load.once('complete',()=>this.scene.start('DifficultyScene'));
   }
@@ -210,47 +207,54 @@ class DifficultyScene extends Phaser.Scene{
     AudioMgr.init(this);
     const overlay=this.add.rectangle(480,300,960,600,0x000000,0.35);
     const panel=this.add.rectangle(480,300,460,240,0x0b0b0f,0.98).setStrokeStyle(2,0xffffff);
-    const title=this.add.text(480,240,'CHOISIS LA DIFFICULTÉ',{fontFamily:'"Press Start 2P"',fontSize:'14px',color:COLORS.cyan}).setOrigin(0.5);
-    const opts=['Facile','Normal','Difficile']; let x=480-150;
+    const title=this.add.text(480,240,'CHOISIS LA DIFFICULTÉ',{fontFamily:'\"Press Start 2P\"',fontSize:'14px',color:COLORS.cyan}).setOrigin(0.5);
+    const opts=['Facile','Normal','Difficile']; let x=480-140;
     opts.forEach(label=>{
-      const btn=this.add.text(x,300,label,{fontFamily:'"Press Start 2P"',fontSize:'12px',color:'#fff'}).setOrigin(0.5).setInteractive({useHandCursor:true});
+      const btn=this.add.text(x,300,label,{fontFamily:'\"Press Start 2P\"',fontSize:'12px',color:'#fff'}).setOrigin(0.5).setInteractive({useHandCursor:true});
       btn.on('pointerover',()=>{AudioMgr.play('hover',0.7);btn.setColor(COLORS.gold);});
       btn.on('pointerout',()=>btn.setColor('#fff'));
       btn.on('pointerdown',()=>{AudioMgr.play('click');const st=getSettings();st.difficulty=label;setSettings(st);
         this.tweens.add({targets:[overlay,panel,title],alpha:0,duration:400,onComplete:()=>this.scene.start('GameIntroScene')});});
-      x+=150;
+      x+=140;
     });
-    this.add.text(480,360,'Appuie pour lancer le niveau 1-0',{fontFamily:'"Press Start 2P"',fontSize:'10px',color:'#ccc'}).setOrigin(0.5);
+    this.add.text(480,360,'Appuie pour lancer le niveau 1-0',{fontFamily:'\"Press Start 2P\"',fontSize:'10px',color:'#ccc'}).setOrigin(0.5);
   }
 }
 
-/* 6) Niveau 1-0 (Intro + gameplay de base) */
+/* 6) Niveau 1-0 */
 class GameIntroScene extends Phaser.Scene{
   constructor(){super('GameIntroScene');}
   create(){
     AudioMgr.init(this);
-    const W=4000,H=2400;
-    this.physics.world.setBounds(0,-H,W,H+800);
+    this.physics.world.setBounds(0,0,4000,800);
     this.physics.world.gravity.y=1200;
 
-    this.bg=this.add.graphics().setScrollFactor(0);
-    this._drawSky(0);
+    // --- Fond ---
+    const g=this.add.graphics().setScrollFactor(0);
+    const grad=this.add.gradientTexture(960,600,[0x14244A,0x224C82,0x386CB6,0x224C82]);
+    this.add.image(480,300,grad).setScrollFactor(0);
 
+    // --- Sol avec herbe + terre ---
+    const ground=this.add.graphics().setScrollFactor(1);
+    ground.fillStyle(0x5a3c1e,1).fillRect(0,760,4000,40);
+    ground.fillStyle(0x3fbf3f,1).fillRect(0,740,4000,20);
     this.platforms=this.physics.add.staticGroup();
-    this.platforms.create(800,780,null).setDisplaySize(1600,40).refreshBody();
+    this.platforms.create(2000,760,null).setDisplaySize(4000,40).refreshBody();
 
+    // --- Joueur ---
     this.player=this.physics.add.sprite(200,700,'brad',0);
     this._initBradAnims();
     this.player.play('brad_idle',true);
     this.player.setCollideWorldBounds(true);
-
     this.physics.add.collider(this.player,this.platforms,()=>this._onLand());
 
+    // --- Contrôles ---
     this.cursors=this.input.keyboard.createCursorKeys();
     this.keyZ=this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Z);
     this.keySpace=this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
 
-    this.cameras.main.setBounds(0,-H,W,H+600);
+    // --- Caméra ---
+    this.cameras.main.setBounds(0,0,4000,800);
     this.cameras.main.startFollow(this.player,true,0.12,0.12);
 
     AudioMgr.play('wind_whoosh',0.6);
@@ -271,22 +275,18 @@ class GameIntroScene extends Phaser.Scene{
     }
 
     if((Phaser.Input.Keyboard.JustDown(this.keyZ)||Phaser.Input.Keyboard.JustDown(this.keySpace))&&this.player.body.blocked.down){
-      this.player.setVelocityY(-500);
+      this.player.setVelocityY(-550);
       AudioMgr.play('jump',0.6);
       this.player.play('brad_jump',true);
     }
   }
 
-  _drawSky(){
-    const g=this.bg; g.clear(); const W=1600,H=900;
-    const top=Phaser.Display.Color.GetColor(20,30,60);
-    const mid=Phaser.Display.Color.GetColor(40,80,130);
-    const bot=Phaser.Display.Color.GetColor(60,110,160);
-    g.fillGradientStyle(top,top,mid,mid,1); g.fillRect(0,0,W,H*0.7);
-    g.fillStyle(bot,1); g.fillRect(0,H*0.7,W,H*0.3);
-  }
   _onLand(){
-    if(!this.landed){AudioMgr.play('land_heavy',0.7);this.landed=true;AudioMgr.playMusic('level1_intro_theme',0.3);}
+    if(!this.landed){
+      AudioMgr.play('land_heavy',0.7);
+      this.landed=true;
+      AudioMgr.playMusic('level1_intro_theme',0.35);
+    }
   }
   _initBradAnims(){
     if(this.anims.exists('brad_idle')) return;
