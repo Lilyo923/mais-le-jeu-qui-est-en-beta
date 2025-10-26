@@ -2,22 +2,30 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
   <title>Brad Bitt – Le Jeu</title>
-  <link rel="stylesheet" href="style.css">
+
+  <!-- Police rétro du jeu -->
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <!-- Conteneur Phaser centré -->
   <div id="game-container"></div>
 
   <!-- Interface mobile -->
-  <div id="mobile-ui" class="hidden">
-    <button id="btn-jump" aria-label="Saut">↑</button>
-    <button id="btn-action" aria-label="Action">A</button>
-    <button id="btn-pause" aria-label="Pause">II</button>
+  <div id="mobile-ui" class="hidden" aria-hidden="true">
+    <button id="btn-jump" aria-label="Saut" type="button">↑</button>
+    <button id="btn-action" aria-label="Action" type="button">A</button>
+    <button id="btn-pause" aria-label="Pause" type="button">II</button>
   </div>
 
+  <!-- Phaser -->
   <script src="https://cdn.jsdelivr.net/npm/phaser@3/dist/phaser.js"></script>
+
+  <!-- Script unique (tu colleras d’abord le MENU, puis le NIVEAU dans le message suivant) -->
   <script src="script.js"></script>
 </body>
 </html>
