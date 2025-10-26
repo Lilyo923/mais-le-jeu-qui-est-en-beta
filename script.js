@@ -277,4 +277,76 @@ class GameIntroScene extends Phaser.Scene{
     // Sol
     const g=this.add.graphics();
     g.fillStyle(0x228B22,1); g.fillRect(0,780,W,20);
-    g.fillStyle(0x8B4513,1); g.fillRect(0,
+    g.fillStyle(0x8B4513,1); g.fillRect(0,800,W,120);
+    this.platforms=this.physics.add.staticGroup();
+    this.platforms.create(W/2,790,null).setDisplaySize(W,20).refreshBody();
+
+    // Joueur
+    this.player=this.physics.add.sprite(200,600,'brad',0);
+    this._initBradAnims();
+    this.player.setCollideWorldBounds(true);
+    this.physics.add.collider(this.player,this.platforms,()=>this._onLand());
+
+    // Caméra
+    this.cameras.main.setBounds(0,0,W,H);
+    this.cameras.main.startFollow(this.player,true,0.12,0.12);
+
+    // Contrôles
+    this.cursors=this.input.keyboard.createCursorKeys();
+    this.keyZ=this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Z);
+    this.keySpace=this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+    this._setupMobile();
+
+    // Musique
+    AudioMgr.playMusic('level1_intro_theme',0.4);
+  }
+
+  update(){
+    const p=this.player,c=this.cursors;
+    const speed=180,jump=-400;
+    if(c.left.isDown){ p.setVelocityX(-speed); p.flipX=true; p.play('brad_walk',true);}
+    else if(c.right.isDown){ p.setVelocityX(speed); p.flipX=false; p.play('brad_walk',true);}
+    else{ p.setVelocityX(0); p.play('brad_idle',true);}
+    if((c.up.isDown||this.keyZ.isDown||this.keySpace.isDown||this._mobileJump)&&p.body.touching.down){ AudioMgr.play('jump'); p.setVelocityY(jump); }
+
+    this._drawSky();
+    this.clouds.children.iterate(c=>{ c._x-=c._speed; if(c._x<-200)c._x=1600+200; c.setX(c._x); });
+  }
+
+  _drawSky(){
+    const g=this.bg; g.clear(); const W=1600,H=900;
+    const top=Phaser.Display.Color.GetColor(20,30,60);
+    const mid=Phaser.Display.Color.GetColor(40,80,130);
+    const bot=Phaser.Display.Color.GetColor(60,110,160);
+    g.fillGradientStyle(top,top,mid,mid,1); g.fillRect(0,0,W,H*0.7);
+    g.fillStyle(bot,1); g.fillRect(0,H*0.7,W,H*0.3);
+  }
+  _onLand(){ if(!this.landed){ AudioMgr.play('land_heavy',0.7); this.landed=true; } }
+  _initBradAnims(){
+    if(this.anims.exists('brad_idle')) return;
+    this.anims.create({key:'brad_idle',frames:this.anims.generateFrameNumbers('brad',{start:0,end:3}),frameRate:6,repeat:-1});
+    this.anims.create({key:'brad_walk',frames:this.anims.generateFrameNumbers('brad',{start:4,end:7}),frameRate:10,repeat:-1});
+    this.anims.create({key:'brad_jump',frames:this.anims.generateFrameNumbers('brad',{start:8,end:11}),frameRate:10,repeat:-1});
+  }
+
+  _setupMobile(){
+    const ui=document.getElementById('mobile-ui'); if(!ui)return;
+    ui.classList.remove('hidden'); this._mobileJump=false;
+    const jump=document.getElementById('btn-jump');
+    jump.addEventListener('touchstart',()=>{this._mobileJump=true;});
+    jump.addEventListener('touchend',()=>{this._mobileJump=false;});
+  }
+}
+
+/* === Configuration Phaser === */
+new Phaser.Game({
+  type: Phaser.AUTO,
+  parent: 'game-container',
+  width: 960,
+  height: 600,
+  pixelArt: true,
+  transparent: true,
+  physics: { default:'arcade', arcade:{ gravity:{y:0}, debug:false } },
+  scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
+  scene: [PreloadScene, IntroScene, MenuScene, DifficultyScene, BootScene, GameIntroScene]
+});
