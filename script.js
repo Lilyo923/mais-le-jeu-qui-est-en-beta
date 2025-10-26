@@ -219,7 +219,7 @@ class MenuScene extends Phaser.Scene{
     const title=this.add.text(cx,cy-100,'CREDITS',{fontFamily:'"Press Start 2P"',fontSize:'14px',color:COLORS.pink}).setOrigin(0.5).setVisible(false);
     const text=this.add.text(cx,cy-25,"Site imaginé par Brad Bitt.\nMusique : Échantillons créés par Mixvibes,\nassemblés par Lilyo.",{
       fontFamily:'"Press Start 2P"',fontSize:'10px',color:'#fff',align:'center'}).setOrigin(0.5).setVisible(false);
-    const back=this.add.text(cx,cy+95,'RETOUR',{fontFamily:'"Press Start 2P"',fontSize:'12px',color:'#fff'}).setOrigin(0.5).setInteractive().setVisible(false);
+    const back=this.add.text(cx,cy+95,'RETOUR',{fontFamily:'"Press Start 2P"',fontSize:'12px',color:'#fff' ,lineSpacing: 10}).setOrigin(0.5).setInteractive().setVisible(false);
     back.on('pointerover',()=>back.setColor(COLORS.gold));
     back.on('pointerout',()=>back.setColor('#fff'));
     back.on('pointerdown',()=>{p('back');this._toggleCredits(false);});
