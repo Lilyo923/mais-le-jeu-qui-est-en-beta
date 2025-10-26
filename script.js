@@ -254,52 +254,133 @@ class BootScene extends Phaser.Scene{
   create(){ this.scene.start('GameIntroScene'); }
 }
 
-/* 6️⃣ Niveau 1-0 */
-class GameIntroScene extends Phaser.Scene{
+/* 6) Niveau 1-0 (intro chute + début de zone) */
+class GameIntroScene extends Phaser.Scene {
   constructor(){ super('GameIntroScene'); }
   create(){
     AudioMgr.init(this);
-    const W=1600,H=900;
-    this.physics.world.setBounds(0,0,W,H);
-    this.physics.world.gravity.y=1000;
+    const W=4000,H=2400;
+    this.physics.world.setBounds(0,-H,W,H+800);
+    this.physics.world.gravity.y=1200;
 
-    // Ciel
-    this.bg=this.add.graphics();
-    this._drawSky();
-    this.clouds=this.add.group();
-    for(let i=0;i<8;i++){
-      const c=this.add.graphics(); c.fillStyle(0xffffff,0.3);
-      const x=Phaser.Math.Between(0,W), y=Phaser.Math.Between(30,250);
-      c.fillEllipse(x,y,Phaser.Math.Between(100,180),Phaser.Math.Between(40,80));
-      c._speed=Phaser.Math.FloatBetween(0.2,0.6); c._x=x; this.clouds.add(c);
-    }
+    // Fond & nuages
+    this.bg=this.add.graphics().setScrollFactor(0);
+    this._drawSky(0);
+    this.cloudsFar = this._spawnClouds(8,0.15,0xFFFFFF,0.22);
+    this.cloudsMid = this._spawnClouds(8,0.30,0xFFFFFF,0.28);
+    this.cloudsNear= this._spawnClouds(6,0.50,0xFFFFFF,0.35);
 
-    // Sol
-    const g=this.add.graphics();
-    g.fillStyle(0x228B22,1); g.fillRect(0,780,W,20);
-    g.fillStyle(0x8B4513,1); g.fillRect(0,800,W,120);
+    // Plateformes sol + structures
     this.platforms=this.physics.add.staticGroup();
-    this.platforms.create(W/2,790,null).setDisplaySize(W,20).refreshBody();
+    this.platforms.create(800,780,null).setDisplaySize(1600,40).refreshBody(); // sol visible
+    const baseX=1900, gap=180;
+    [0,1,2,3].forEach(i=> this.platforms.create(baseX+i*gap, 700 - i*30, null).setDisplaySize(120,18).refreshBody());
+
+    // Ennemis (blocs temporaires)
+    this.enemies=this.physics.add.group({allowGravity:true});
+    this._spawnEnemy(3000,700,'basic');
+    this._spawnEnemy(3200,700,'helmet');
 
     // Joueur
-    this.player=this.physics.add.sprite(200,600,'brad',0);
+    this.player=this.physics.add.sprite(200,700,'brad',0);
     this._initBradAnims();
+    this.player.play('brad_idle', true);
     this.player.setCollideWorldBounds(true);
+
+    // Collisions
     this.physics.add.collider(this.player,this.platforms,()=>this._onLand());
+    this.physics.add.collider(this.enemies,this.platforms);
 
-    // Caméra
-    this.cameras.main.setBounds(0,0,W,H);
-    this.cameras.main.startFollow(this.player,true,0.12,0.12);
-
-    // Contrôles
+    // Contrôles clavier
     this.cursors=this.input.keyboard.createCursorKeys();
     this.keyZ=this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Z);
     this.keySpace=this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
-    this._setupMobile();
 
-    // Musique
-    AudioMgr.playMusic('level1_intro_theme',0.4);
+    // Caméra
+    this.cameras.main.setBounds(0,-H,W,H+600);
+    this.cameras.main.startFollow(this.player,true,0.12,0.12);
+
+    // Intro chute
+    AudioMgr.play('wind_whoosh',0.6);
+    this.state='intro_fall';
+    this.time.delayedCall(10000,()=>{ if(this.state==='intro_fall'){ this.player.setVelocityY(0); this.player.y = 700; }});
   }
+
+  update(time,delta){
+    const t = Math.min(1, time/3000);
+    this._drawSky(t);
+    this._tickClouds(this.cloudsFar, 10*delta/1000);
+    this._tickClouds(this.cloudsMid, 20*delta/1000);
+    this._tickClouds(this.cloudsNear,35*delta/1000);
+
+    // Mouvement du joueur
+    if(this.cursors.left.isDown){
+      this.player.setVelocityX(-200);
+      this.player.flipX = true;
+      this.player.play('brad_walk', true);
+    } else if(this.cursors.right.isDown){
+      this.player.setVelocityX(200);
+      this.player.flipX = false;
+      this.player.play('brad_walk', true);
+    } else {
+      this.player.setVelocityX(0);
+      if(this.player.body.blocked.down) this.player.play('brad_idle', true);
+    }
+
+    // Saut
+    if((Phaser.Input.Keyboard.JustDown(this.keyZ) || Phaser.Input.Keyboard.JustDown(this.keySpace)) && this.player.body.blocked.down){
+      this.player.setVelocityY(-500);
+      AudioMgr.play('jump',0.6);
+      this.player.play('brad_jump', true);
+    }
+  }
+
+  /* --- visuel --- */
+  _drawSky(t){
+    this.bg.clear();
+    const top=Phaser.Display.Color.Interpolate.ColorWithColor({r:11,g:11,b:15},{r:32,g:78,b:156},100,t*100);
+    const mid=Phaser.Display.Color.Interpolate.ColorWithColor({r:18,g:18,b:23},{r:76,g:140,b:210},100,t*100);
+    const bot=Phaser.Display.Color.Interpolate.ColorWithColor({r:10,g:10,b:13},{r:40,g:96,b:176},100,t*100);
+    const w=this.scale.width,h=this.scale.height,g=this.bg;
+    g.fillStyle(Phaser.Display.Color.GetColor(top.r,top.g,top.b),1); g.fillRect(0,0,w,h*0.4);
+    g.fillStyle(Phaser.Display.Color.GetColor(mid.r,mid.g,mid.b),1); g.fillRect(0,h*0.4,w,h*0.35);
+    g.fillStyle(Phaser.Display.Color.GetColor(bot.r,bot.g,bot.b),1); g.fillRect(0,h*0.75,w,h*0.25);
+  }
+  _spawnClouds(n,sf,color,alpha){
+    const g=this.add.group();
+    for(let i=0;i<n;i++){
+      const c=this.add.graphics().setScrollFactor(0);
+      c.fillStyle(color,alpha);
+      const x=Phaser.Math.Between(0,800), y=Phaser.Math.Between(20,300);
+      c.fillEllipse(x,y,Phaser.Math.Between(110,200),Phaser.Math.Between(40,80));
+      c._speed=sf; c._x=x; g.add(c);
+    }
+    return g;
+  }
+  _tickClouds(group,spd){
+    group.children.iterate(c=>{ c._x-=spd*c._speed; if(c._x<-220) c._x=800+220; c.setX(c._x); });
+  }
+
+  /* --- gameplay --- */
+  _spawnEnemy(x,y,type){
+    const en=this.enemies.create(x,y,null);
+    en.setSize(32,32).setBounce(0.1).setCollideWorldBounds(true);
+    en.setTintFill(type==='helmet'?0x2a7dff:0xff2a2a);
+    return en;
+  }
+  _onLand(){
+    if(this.landed) return;
+    this.landed=true;
+    AudioMgr.play('land_heavy',0.8);
+    AudioMgr.playMusic('level1_intro_theme',0.28);
+  }
+  _initBradAnims(){
+    if(this.anims.exists('brad_idle')) return;
+    this.anims.create({ key:'brad_idle', frames:this.anims.generateFrameNumbers('brad',{start:0,end:3}), frameRate:6, repeat:-1});
+    this.anims.create({ key:'brad_walk', frames:this.anims.generateFrameNumbers('brad',{start:4,end:7}), frameRate:10, repeat:-1});
+    this.anims.create({ key:'brad_jump', frames:this.anims.generateFrameNumbers('brad',{start:8,end:11}), frameRate:10, repeat:-1});
+  }
+}
 
   update(){
     const p=this.player,c=this.cursors;
