@@ -53,7 +53,6 @@ class PreloadScene extends Phaser.Scene{
 class IntroScene extends Phaser.Scene{
   constructor(){ super('IntroScene'); }
   create(){
-    const s=getSettings();
     this._logo('IMAGINe','Studio',COLORS.cyan,COLORS.pink,()=>{
       this._logo('Engine','HwR',COLORS.pink,COLORS.cyan,()=>{
         this.cameras.main.fadeOut(500,0,0,0);
@@ -62,7 +61,7 @@ class IntroScene extends Phaser.Scene{
     });
   }
   _logo(Ltxt,Rtxt,Lcol,Rcol,done){
-    const cx=400,cy=300;
+    const cx=480,cy=300;
     const L=this.add.text(cx,cy,Ltxt,{fontFamily:'"Press Start 2P"',fontSize:'26px',color:Lcol}).setOrigin(1,0.5).setAlpha(0);
     const R=this.add.text(cx,cy,Rtxt,{fontFamily:'"Press Start 2P"',fontSize:'26px',color:Rcol}).setOrigin(0,0.5).setAlpha(0);
     AudioMgr.play('open',0.8);
@@ -148,9 +147,9 @@ class MenuScene extends Phaser.Scene{
     const title=this.add.text(cx,cy-100,'OPTIONS',{fontFamily:'"Press Start 2P"',fontSize:'14px',color:COLORS.cyan}).setOrigin(0.5).setVisible(false);
 
     const diffLab=this.add.text(cx-130,cy-45,'Difficulté',{fontFamily:'"Press Start 2P"',fontSize:'12px',color:'#fff'}).setOrigin(0,0.5).setVisible(false);
-    const diffVal=this.add.text(cx+50,cy-45,s.difficulty,{fontFamily:'"Press Start 2P"',fontSize:'12px',color:COLORS.pink}).setOrigin(0.5).setVisible(false);
-    const L=this.add.text(cx-10,cy-45,'<',{fontFamily:'"Press Start 2P"',fontSize:'12px',color:'#fff'}).setOrigin(0.5).setInteractive().setVisible(false);
-    const R=this.add.text(cx+110,cy-45,'>',{fontFamily:'"Press Start 2P"',fontSize:'12px',color:'#fff'}).setOrigin(0.5).setInteractive().setVisible(false);
+    const diffVal=this.add.text(cx+36,cy-45,s.difficulty,{fontFamily:'"Press Start 2P"',fontSize:'12px',color:COLORS.pink}).setOrigin(0.5).setVisible(false);
+    const L=this.add.text(cx-12,cy-45,'<',{fontFamily:'"Press Start 2P"',fontSize:'12px',color:'#fff'}).setOrigin(0.5).setInteractive().setVisible(false);
+    const R=this.add.text(cx+84,cy-45,'>',{fontFamily:'"Press Start 2P"',fontSize:'12px',color:'#fff'}).setOrigin(0.5).setInteractive().setVisible(false);
     const diffs=['Facile','Normal','Difficile'],setD=d=>{const s=getSettings();s.difficulty=d;setSettings(s);diffVal.setText(d);};
     L.on('pointerdown',()=>{p('click');setD(diffs[(diffs.indexOf(getSettings().difficulty)+2)%3]);});
     R.on('pointerdown',()=>{p('click');setD(diffs[(diffs.indexOf(getSettings().difficulty)+1)%3]);});
@@ -179,8 +178,8 @@ class MenuScene extends Phaser.Scene{
     const g=this.add.graphics().fillStyle(0x0b0b0f,0.95).fillRoundedRect(cx-210,cy-130,420,260,10)
       .lineStyle(2,0xffffff).strokeRoundedRect(cx-210,cy-130,420,260,10).setVisible(false);
     const title=this.add.text(cx,cy-100,'CREDITS',{fontFamily:'"Press Start 2P"',fontSize:'14px',color:COLORS.pink}).setOrigin(0.5).setVisible(false);
-    const text=this.add.text(cx,cy-25,"Site imaginé par Brad Bitt.\n\nMusique : Échantillons créés par Mixvibes,\nassemblés par Lilyo.",{fontFamily:'\"Press Start 2P\"',fontSize:'10px',color:'#fff',align:'center'}).setOrigin(0.5).setVisible(false);
-    const back=this.add.text(cx,cy+95,'RETOUR',{fontFamily:'\"Press Start 2P\"',fontSize:'12px',color:'#fff'}).setOrigin(0.5).setInteractive().setVisible(false);
+    const text=this.add.text(cx,cy-25,"Site imaginé par Brad Bitt.\n\nMusique : Échantillons créés par Mixvibes,\nassemblés par Lilyo.",{fontFamily:'"Press Start 2P"',fontSize:'10px',color:'#fff',align:'center'}).setOrigin(0.5).setVisible(false);
+    const back=this.add.text(cx,cy+95,'RETOUR',{fontFamily:'"Press Start 2P"',fontSize:'12px',color:'#fff'}).setOrigin(0.5).setInteractive().setVisible(false);
     back.on('pointerover',()=>back.setColor(COLORS.gold));
     back.on('pointerout',()=>back.setColor('#fff'));
     back.on('pointerdown',()=>{p('back');this._toggleCredits(false);});
@@ -193,7 +192,7 @@ class MenuScene extends Phaser.Scene{
 class BootScene extends Phaser.Scene{
   constructor(){super('BootScene');}
   preload(){
-    const t=this.add.text(480,560,'Chargement',{fontFamily:'\"Press Start 2P\"',fontSize:'12px',color:'#fff'}).setOrigin(0.5,1);
+    const t=this.add.text(480,560,'Chargement',{fontFamily:'"Press Start 2P"',fontSize:'12px',color:'#fff'}).setOrigin(0.5,1);
     let d=0; this.time.addEvent({delay:350,loop:true,callback:()=>{d=(d+1)%4;t.setText('Chargement'+'.'.repeat(d));}});
     this.load.once('complete',()=>this.scene.start('DifficultyScene'));
   }
@@ -207,17 +206,17 @@ class DifficultyScene extends Phaser.Scene{
     AudioMgr.init(this);
     const overlay=this.add.rectangle(480,300,960,600,0x000000,0.35);
     const panel=this.add.rectangle(480,300,460,240,0x0b0b0f,0.98).setStrokeStyle(2,0xffffff);
-    const title=this.add.text(480,240,'CHOISIS LA DIFFICULTÉ',{fontFamily:'\"Press Start 2P\"',fontSize:'14px',color:COLORS.cyan}).setOrigin(0.5);
+    const title=this.add.text(480,240,'CHOISIS LA DIFFICULTÉ',{fontFamily:'"Press Start 2P"',fontSize:'14px',color:COLORS.cyan}).setOrigin(0.5);
     const opts=['Facile','Normal','Difficile']; let x=480-140;
     opts.forEach(label=>{
-      const btn=this.add.text(x,300,label,{fontFamily:'\"Press Start 2P\"',fontSize:'12px',color:'#fff'}).setOrigin(0.5).setInteractive({useHandCursor:true});
+      const btn=this.add.text(x,300,label,{fontFamily:'"Press Start 2P"',fontSize:'12px',color:'#fff'}).setOrigin(0.5).setInteractive({useHandCursor:true});
       btn.on('pointerover',()=>{AudioMgr.play('hover',0.7);btn.setColor(COLORS.gold);});
       btn.on('pointerout',()=>btn.setColor('#fff'));
       btn.on('pointerdown',()=>{AudioMgr.play('click');const st=getSettings();st.difficulty=label;setSettings(st);
         this.tweens.add({targets:[overlay,panel,title],alpha:0,duration:400,onComplete:()=>this.scene.start('GameIntroScene')});});
       x+=140;
     });
-    this.add.text(480,360,'Appuie pour lancer le niveau 1-0',{fontFamily:'\"Press Start 2P\"',fontSize:'10px',color:'#ccc'}).setOrigin(0.5);
+    this.add.text(480,360,'Appuie pour lancer le niveau 1-0',{fontFamily:'"Press Start 2P"',fontSize:'10px',color:'#ccc'}).setOrigin(0.5);
   }
 }
 
@@ -229,73 +228,68 @@ class GameIntroScene extends Phaser.Scene{
     this.physics.world.setBounds(0,0,4000,800);
     this.physics.world.gravity.y=1200;
 
-    // --- Fond (dégradé) ---
+    // --- Fond (dégradé code) ---
     const sky = this.add.graphics();
     const W = this.scale.width;
     const H = this.scale.height;
-
-    const top = Phaser.Display.Color.GetColor(20, 36, 74);
-    const mid = Phaser.Display.Color.GetColor(34, 76, 130);
-    const bottom = Phaser.Display.Color.GetColor(56, 108, 182);
-
-    sky.fillGradientStyle(top, top, mid, mid, 1);
-    sky.fillRect(0, 0, W, H * 0.6);
-    sky.fillStyle(bottom, 1);
-    sky.fillRect(0, H * 0.6, W, H * 0.4);
-    sky.setScrollFactor(0); // important pour qu'il reste en fond
+    const top = Phaser.Display.Color.GetColor(20,36,74);
+    const mid = Phaser.Display.Color.GetColor(34,76,130);
+    const bottom = Phaser.Display.Color.GetColor(56,108,182);
+    sky.fillGradientStyle(top, top, mid, mid, 1); sky.fillRect(0,0,W,H*0.6);
+    sky.fillStyle(bottom,1); sky.fillRect(0,H*0.6,W,H*0.4);
+    sky.setScrollFactor(0);
 
     // --- Sol avec herbe + terre ---
     const ground=this.add.graphics().setScrollFactor(1);
-    ground.fillStyle(0x5a3c1e,1).fillRect(0,760,4000,40);
-    ground.fillStyle(0x3fbf3f,1).fillRect(0,740,4000,20);
-
+    ground.fillStyle(0x5a3c1e,1).fillRect(0,760,4000,40); // terre
+    ground.fillStyle(0x3fbf3f,1).fillRect(0,740,4000,20); // herbe
     this.platforms=this.physics.add.staticGroup();
-    this.platforms.create(2000,750,null).setDisplaySize(4000,40).refreshBody();
+    this.platforms.create(2000,760,null).setDisplaySize(4000,40).refreshBody();
 
     // --- Joueur ---
-this.player = this.physics.add.sprite(200, 600, 'brad', 0);
-this.player.setDepth(10); // ✅ Passe devant l'herbe
-this._initBradAnims();
-this.player.play('brad_idle', true);
-this.player.setCollideWorldBounds(true);
+    this.player = this.physics.add.sprite(200, 600, 'brad', 0);
+    this.player.setDepth(10).setAlpha(1);
+    this._initBradAnims();               // animations robustes selon nb de frames
+    this.player.play('brad_idle', true);
+    this.player.setCollideWorldBounds(true);
 
-// ✅ Collider
-this.physics.add.collider(this.player, this.platforms, () => this._onLand());
+    // Hitbox propre (ajuste si besoin selon ton sprite)
+    this.player.setSize(24, 36).setOffset(12, 12);
 
-// ✅ Caméra recentrée directement sur Brad
-this.cameras.main.startFollow(this.player, true, 0.12, 0.12);
-this.cameras.main.setBounds(0, 0, 4000, 800);
+    // Collider
+    this.physics.add.collider(this.player, this.platforms, () => this._onLand());
 
-// ✅ Debug pour vérifier le spawn (à retirer ensuite)
-console.log("Brad spawn:", this.player.x, this.player.y);
+    // Caméra
+    this.cameras.main.setBounds(0,0,4000,800);
+    this.cameras.main.startFollow(this.player,true,0.12,0.12);
 
-    // --- Contrôles ---
+    // Entrées
     this.cursors=this.input.keyboard.createCursorKeys();
     this.keyZ=this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Z);
     this.keySpace=this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
-
-    // --- Caméra ---
-    this.cameras.main.setBounds(0,0,4000,800);
-    this.cameras.main.startFollow(this.player,true,0.12,0.12);
 
     AudioMgr.play('wind_whoosh',0.6);
   }
 
   update(){
+    if(!this.player.body) return;
+
+    const onGround = this.player.body.blocked.down || this.player.body.touching.down;
+
     if(this.cursors.left.isDown){
       this.player.setVelocityX(-200);
-      this.player.flipX=true;
-      this.player.play('brad_walk',true);
-    } else if(this.cursors.right.isDown){
+      this.player.setFlipX(true);
+      if(onGround) this.player.play('brad_walk',true);
+    }else if(this.cursors.right.isDown){
       this.player.setVelocityX(200);
-      this.player.flipX=false;
-      this.player.play('brad_walk',true);
-    } else {
+      this.player.setFlipX(false);
+      if(onGround) this.player.play('brad_walk',true);
+    }else{
       this.player.setVelocityX(0);
-      if(this.player.body.blocked.down) this.player.play('brad_idle',true);
+      if(onGround) this.player.play('brad_idle',true);
     }
 
-    if((Phaser.Input.Keyboard.JustDown(this.keyZ)||Phaser.Input.Keyboard.JustDown(this.keySpace))&&this.player.body.blocked.down){
+    if((Phaser.Input.Keyboard.JustDown(this.keyZ)||Phaser.Input.Keyboard.JustDown(this.keySpace)) && onGround){
       this.player.setVelocityY(-550);
       AudioMgr.play('jump',0.6);
       this.player.play('brad_jump',true);
@@ -309,11 +303,56 @@ console.log("Brad spawn:", this.player.x, this.player.y);
       AudioMgr.playMusic('level1_intro_theme',0.35);
     }
   }
+
+  // === Animations robustes (s’adaptent au nombre réel de frames) ===
   _initBradAnims(){
     if(this.anims.exists('brad_idle')) return;
-    this.anims.create({key:'brad_idle',frames:this.anims.generateFrameNumbers('brad',{start:0,end:3}),frameRate:6,repeat:-1});
-    this.anims.create({key:'brad_walk',frames:this.anims.generateFrameNumbers('brad',{start:4,end:7}),frameRate:10,repeat:-1});
-    this.anims.create({key:'brad_jump',frames:this.anims.generateFrameNumbers('brad',{start:8,end:11}),frameRate:10,repeat:-1});
+
+    const tex = this.textures.get('brad');
+    // Nombre de frames réellement disponibles (ignore la frame __BASE si présente)
+    let total = 0;
+    if (tex) {
+      const names = tex.getFrameNames();             // ex: ["0","1","2","3",...]
+      total = Math.max(0, names.length);
+    }
+
+    // Helpers pour borner proprement
+    const clampEnd = (start, want) => Math.min(start + want, Math.max(0,total-1));
+
+    // On part du principe (si dispo) :
+    // idle : frames 0..3, walk : 4..7, jump : 8..11
+    const idleStart = 0, idleEnd = clampEnd(0, 3);
+    const walkStart = Math.min(4, Math.max(0,total-1));
+    const walkEnd   = clampEnd(walkStart, 3);
+    const jumpStart = Math.min(8, Math.max(0,total-1));
+    const jumpEnd   = clampEnd(jumpStart, 3);
+
+    // Si total == 0, on sort (texture non trouvée)
+    if(total === 0){
+      // fallback: rien à faire, le sprite restera sur frame 0
+      return;
+    }
+
+    this.anims.create({
+      key:'brad_idle',
+      frames:this.anims.generateFrameNumbers('brad',{ start: idleStart, end: idleEnd }),
+      frameRate: Math.max(2, Math.min(8, (idleEnd-idleStart+1)*2 )),
+      repeat:-1
+    });
+
+    this.anims.create({
+      key:'brad_walk',
+      frames:this.anims.generateFrameNumbers('brad',{ start: walkStart, end: walkEnd }),
+      frameRate: Math.max(4, Math.min(12, (walkEnd-walkStart+1)*3 )),
+      repeat:-1
+    });
+
+    this.anims.create({
+      key:'brad_jump',
+      frames:this.anims.generateFrameNumbers('brad',{ start: jumpStart, end: jumpEnd }),
+      frameRate: Math.max(4, Math.min(12, (jumpEnd-jumpStart+1)*3 )),
+      repeat:-1
+    });
   }
 }
 
