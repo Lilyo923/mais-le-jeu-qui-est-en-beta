@@ -231,7 +231,18 @@ class GameIntroScene extends Phaser.Scene{
 
     // --- Fond ---
     const g=this.add.graphics().setScrollFactor(0);
-    const grad=this.add.gradientTexture(960,600,[0x14244A,0x224C82,0x386CB6,0x224C82]);
+const sky = this.add.graphics();
+const W = this.scale.width;
+const H = this.scale.height;
+
+const top = Phaser.Display.Color.GetColor(20, 36, 74);
+const mid = Phaser.Display.Color.GetColor(34, 76, 130);
+const bottom = Phaser.Display.Color.GetColor(56, 108, 182);
+
+sky.fillGradientStyle(top, top, mid, mid, 1);
+sky.fillRect(0, 0, W, H * 0.6);
+sky.fillStyle(bottom, 1);
+sky.fillRect(0, H * 0.6, W, H * 0.4);
     this.add.image(480,300,grad).setScrollFactor(0);
 
     // --- Sol avec herbe + terre ---
