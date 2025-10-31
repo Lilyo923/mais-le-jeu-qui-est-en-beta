@@ -229,26 +229,26 @@ class GameIntroScene extends Phaser.Scene{
     this.physics.world.setBounds(0,0,4000,800);
     this.physics.world.gravity.y=1200;
 
-    // --- Fond ---
-    const g=this.add.graphics().setScrollFactor(0);
-const sky = this.add.graphics();
-const W = this.scale.width;
-const H = this.scale.height;
+    // --- Fond (dégradé) ---
+    const sky = this.add.graphics();
+    const W = this.scale.width;
+    const H = this.scale.height;
 
-const top = Phaser.Display.Color.GetColor(20, 36, 74);
-const mid = Phaser.Display.Color.GetColor(34, 76, 130);
-const bottom = Phaser.Display.Color.GetColor(56, 108, 182);
+    const top = Phaser.Display.Color.GetColor(20, 36, 74);
+    const mid = Phaser.Display.Color.GetColor(34, 76, 130);
+    const bottom = Phaser.Display.Color.GetColor(56, 108, 182);
 
-sky.fillGradientStyle(top, top, mid, mid, 1);
-sky.fillRect(0, 0, W, H * 0.6);
-sky.fillStyle(bottom, 1);
-sky.fillRect(0, H * 0.6, W, H * 0.4);
-    this.add.image(480,300,grad).setScrollFactor(0);
+    sky.fillGradientStyle(top, top, mid, mid, 1);
+    sky.fillRect(0, 0, W, H * 0.6);
+    sky.fillStyle(bottom, 1);
+    sky.fillRect(0, H * 0.6, W, H * 0.4);
+    sky.setScrollFactor(0); // important pour qu'il reste en fond
 
     // --- Sol avec herbe + terre ---
     const ground=this.add.graphics().setScrollFactor(1);
     ground.fillStyle(0x5a3c1e,1).fillRect(0,760,4000,40);
     ground.fillStyle(0x3fbf3f,1).fillRect(0,740,4000,20);
+
     this.platforms=this.physics.add.staticGroup();
     this.platforms.create(2000,760,null).setDisplaySize(4000,40).refreshBody();
 
