@@ -250,14 +250,24 @@ class GameIntroScene extends Phaser.Scene{
     ground.fillStyle(0x3fbf3f,1).fillRect(0,740,4000,20);
 
     this.platforms=this.physics.add.staticGroup();
-    this.platforms.create(2000,760,null).setDisplaySize(4000,40).refreshBody();
+    this.platforms.create(2000,750,null).setDisplaySize(4000,40).refreshBody();
 
     // --- Joueur ---
-    this.player=this.physics.add.sprite(200,700,'brad',0);
-    this._initBradAnims();
-    this.player.play('brad_idle',true);
-    this.player.setCollideWorldBounds(true);
-    this.physics.add.collider(this.player,this.platforms,()=>this._onLand());
+this.player = this.physics.add.sprite(200, 600, 'brad', 0);
+this.player.setDepth(10); // ✅ Passe devant l'herbe
+this._initBradAnims();
+this.player.play('brad_idle', true);
+this.player.setCollideWorldBounds(true);
+
+// ✅ Collider
+this.physics.add.collider(this.player, this.platforms, () => this._onLand());
+
+// ✅ Caméra recentrée directement sur Brad
+this.cameras.main.startFollow(this.player, true, 0.12, 0.12);
+this.cameras.main.setBounds(0, 0, 4000, 800);
+
+// ✅ Debug pour vérifier le spawn (à retirer ensuite)
+console.log("Brad spawn:", this.player.x, this.player.y);
 
     // --- Contrôles ---
     this.cursors=this.input.keyboard.createCursorKeys();
